@@ -72,12 +72,12 @@ If it has earned a place on your server or computer, toss a coin to your knight:
 ## 1. What it looks like
 
 <p align="center">
-  <img src=".github/assets/screenshots/rustdesk-1.png" alt="Devices in the web console" width="90%">
-  <br><em>Every device that registered with your server, with its system, its last address and one click to connect.</em>
+  <img src=".github/assets/screenshots/rustdesk-1.png" alt="The devices page of the web console in a browser window at nas.local:21114, listing five devices" width="90%">
+  <br><em>Every device that registered with your server, with its system, when it was last online and one click to connect.</em>
 </p>
 
 <p align="center">
-  <img src=".github/assets/screenshots/rustdesk-2.png" alt="Address book in the web console" width="90%">
+  <img src=".github/assets/screenshots/rustdesk-2.png" alt="The address book page of the web console, with four devices in My Address Book" width="90%">
   <br><em>The address book a user sees in every RustDesk client they log in to.</em>
 </p>
 
