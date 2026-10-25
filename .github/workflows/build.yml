@@ -92,7 +92,7 @@ jobs:
           while [ "$SECONDS" -lt "$deadline" ]; do
             console=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 http://localhost:21114/_admin/ || true)
             client=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 http://localhost:21114/webclient/ || true)
-            procs=$(docker exec "$name" sh -c 'pgrep -x hbbs >/dev/null && pgrep -x hbbr >/dev/null && echo up' || true)
+            procs=$(docker exec "$name" sh -c '/usr/bin/healthcheck.sh >/dev/null && echo up' || true)
             if [ "$console" = 200 ] && [ "$client" = 200 ] && [ "$procs" = up ]; then
               docker logs "$name" 2>&1 | grep -q 'RustDesk for Unraid' \
                 || { echo "❌ init banner missing from the log"; docker logs "$name"; exit 1; }
