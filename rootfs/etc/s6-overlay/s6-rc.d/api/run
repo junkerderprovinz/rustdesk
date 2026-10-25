@@ -1,5 +1,5 @@
 #!/command/with-contenv sh
 # shellcheck shell=sh
 sleep 3
-cd /app
+cd /app || exit 1
 ./apimain

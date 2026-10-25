@@ -1,6 +1,6 @@
 #!/command/with-contenv sh
 # shellcheck shell=sh
-cd /data
+cd /data || exit 1
 PARAMS=
 [ "${ENCRYPTED_ONLY}" = "1" ] && PARAMS="-k _"
 /usr/bin/hbbr $PARAMS
