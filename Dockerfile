@@ -53,6 +53,8 @@ RUN tr -d '\r' < /usr/local/share/banner-raw.txt > /usr/local/share/banner.txt \
     && chmod +x /usr/local/bin/print-banner.sh /usr/bin/healthcheck.sh \
        /etc/s6-overlay/s6-rc.d/*/run /etc/s6-overlay/s6-rc.d/key-secret/up.real
 
+# The *_KEY_FILE values are the path to the public key, not a secret.
+# hadolint ignore=DL3064
 ENV SERVER_VERSION=1.1.14-change-id \
     API_VERSION=2.7 \
     RELAY=relay.example.com \
@@ -64,5 +66,5 @@ ENV SERVER_VERSION=1.1.14-change-id \
 EXPOSE 21114 21115 21116 21116/udp 21117 21118 21119
 VOLUME ["/data", "/app/data"]
 WORKDIR /app
-HEALTHCHECK --interval=10s --timeout=5s CMD /usr/bin/healthcheck.sh
+HEALTHCHECK --interval=10s --timeout=5s CMD ["/usr/bin/healthcheck.sh"]
 ENTRYPOINT ["/init"]
