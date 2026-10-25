@@ -14,3 +14,17 @@ BUTTONS = {
     # that lists it.
     "source": "https://github.com/junkerderprovinz/rustdesk/releases/latest",
 }
+
+# The clients are RustDesk's own. Their file names carry the version, so the
+# desktop and APK buttons lead to the release that lists them.
+CLIENTS = "https://github.com/rustdesk/rustdesk/releases/latest"
+BUTTONS.update({
+    "windows": CLIENTS,
+    "windows-arm": CLIENTS,
+    "macos-split": CLIENTS,
+    "linux": CLIENTS,
+    "linux-arm": CLIENTS,
+    "f-droid": "https://f-droid.org/packages/com.carriez.flutter_hbb/",
+    "apk": CLIENTS,
+    "app-store": "https://apps.apple.com/app/rustdesk-remote-desktop/id1581225015",
+})

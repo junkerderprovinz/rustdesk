@@ -27,7 +27,7 @@ const opentype = require(`${gRoot}/opentype.js`);
 const __dir = dirname(fileURLToPath(import.meta.url));
 
 const NAME = "RustDesk";
-const CLAIM = "Every screen, behind your own walls.";
+const CLAIM = "Remote control. Home rules.";
 const THEMES = [
   { suffix: "", bg: "#ffffff", name: "#1f2328", claim: "#5a5d5e" },
   { suffix: "-dark", bg: "#0d1117", name: "#e6edf3", claim: "#9aa4ad" },
