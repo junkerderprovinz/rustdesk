@@ -1,0 +1,137 @@
+From 43116305a26fd184712eca46e193761e76919d46 Mon Sep 17 00:00:00 2001
+From: junkerderprovinz <jdp@halleluja.design>
+Date: Sun, 25 Oct 2026 12:26:56 +0100
+Subject: [PATCH] Let a client change its ID
+
+A RegisterPk that carries old_id renames the peer, in the database and in memory, when the uuid matches the one registered under the old ID and the new ID is free.
+---
+ src/database.rs          |  9 +++++++
+ src/peer.rs              | 14 +++++++++++
+ src/rendezvous_server.rs | 52 +++++++++++++++++++++++++++++++++++++++-
+ 3 files changed, 74 insertions(+), 1 deletion(-)
+
+diff --git a/src/database.rs b/src/database.rs
+index fa1b6ed..5e5abdf 100644
+--- a/src/database.rs
++++ b/src/database.rs
+@@ -142,6 +142,15 @@ impl Database {
+         .await?;
+         Ok(())
+     }
++
++    pub async fn rename_peer(&self, guid: &[u8], id: &str) -> ResultType<()> {
++        sqlx::query("update peer set id = ? where guid = ?")
++            .bind(id)
++            .bind(guid)
++            .execute(self.pool.get().await?.deref_mut())
++            .await?;
++        Ok(())
++    }
+ }
+ 
+ #[cfg(test)]
+diff --git a/src/peer.rs b/src/peer.rs
+index 4ca87cf..f833662 100644
+--- a/src/peer.rs
++++ b/src/peer.rs
+@@ -168,6 +168,20 @@ impl PeerMap {
+         tmp
+     }
+ 
++    /// Moves the peer registered as `old_id` to `id`, in the database and in memory.
++    /// Returns false when `old_id` is unknown.
++    pub(crate) async fn rename(&self, old_id: &str, id: &str) -> ResultType<bool> {
++        let Some(peer) = self.get(old_id).await else {
++            return Ok(false);
++        };
++        let guid = peer.read().await.guid.clone();
++        self.db.rename_peer(&guid, id).await?;
++        let mut map = self.map.write().await;
++        map.remove(old_id);
++        map.insert(id.to_owned(), peer);
++        Ok(true)
++    }
++
+     #[inline]
+     pub(crate) async fn get_in_memory(&self, id: &str) -> Option<LockPeer> {
+         self.map.read().await.get(id).cloned()
+diff --git a/src/rendezvous_server.rs b/src/rendezvous_server.rs
+index fb5105d..b665859 100644
+--- a/src/rendezvous_server.rs
++++ b/src/rendezvous_server.rs
+@@ -14,7 +14,7 @@ use hbb_common::{
+     log,
+     protobuf::{Message as _, MessageField},
+     rendezvous_proto::{
+-        register_pk_response::Result::{INVALID_ID_FORMAT, TOO_FREQUENT, UUID_MISMATCH},
++        register_pk_response::Result::{ID_EXISTS, INVALID_ID_FORMAT, TOO_FREQUENT, UUID_MISMATCH},
+         *,
+     },
+     sodiumoxide::crypto::{
+@@ -683,6 +683,9 @@ impl RendezvousServer {
+         addr: SocketAddr,
+         ws: bool,
+     ) -> Result<register_pk_response::Result, register_pk_response::Result> {
++        if !rk.old_id.is_empty() {
++            return self.handle_change_id(rk, addr).await;
++        }
+         if rk.uuid.is_empty() || rk.pk.is_empty() {
+             return Err(INVALID_ID_FORMAT);
+         }
+@@ -775,6 +778,53 @@ impl RendezvousServer {
+         // Ok(msg_out)
+     }
+ 
++    /// A client renames itself by sending its old id, the new one and its uuid. Only the
++    /// machine registered under the old id may do that, and only to an id nobody else holds.
++    async fn handle_change_id(
++        &mut self,
++        rk: RegisterPk,
++        addr: SocketAddr,
++    ) -> Result<register_pk_response::Result, register_pk_response::Result> {
++        let (old_id, id) = (rk.old_id, rk.id);
++        if rk.uuid.is_empty() || !hbb_common::is_valid_custom_id(&id) {
++            return Err(INVALID_ID_FORMAT);
++        }
++        if !self.check_ip_blocker(&addr.ip().to_string(), &old_id).await {
++            return Err(TOO_FREQUENT);
++        }
++        let Some(peer) = self.pm.get(&old_id).await else {
++            return Err(UUID_MISMATCH);
++        };
++        if peer.read().await.uuid != rk.uuid {
++            log::warn!("Change id {} -> {} refused: uuid mismatch", old_id, id);
++            return Err(UUID_MISMATCH);
++        }
++        if id == old_id {
++            return Ok(register_pk_response::Result::OK);
++        }
++        if let Some(other) = self.pm.get(&id).await {
++            let holder = other.read().await.uuid.clone();
++            if holder == rk.uuid {
++                return Ok(register_pk_response::Result::OK);
++            }
++            // An empty uuid is a placeholder left by a lookup, not a registration.
++            if !holder.is_empty() {
++                return Err(ID_EXISTS);
++            }
++        }
++        match self.pm.rename(&old_id, &id).await {
++            Ok(true) => {
++                log::info!("Changed id {} -> {}", old_id, id);
++                Ok(register_pk_response::Result::OK)
++            }
++            Ok(false) => Err(UUID_MISMATCH),
++            Err(err) => {
++                log::error!("Change id {} -> {} failed: {}", old_id, id, err);
++                Err(register_pk_response::Result::SERVER_ERROR)
++            }
++        }
++    }
++
+     #[inline]
+     async fn update_addr(&mut self, id: String, socket_addr: SocketAddr) -> bool {
+         let (request_pk, ip_change) = if let Some(old) = self.pm.get_in_memory(&id).await {
+-- 
+2.56.0.windows.2
+

@@ -1,0 +1,25 @@
+Bundled software in the RustDesk Unraid container image
+=======================================================
+
+The GNU Affero General Public License v3.0 (see LICENSE) covers the files in this
+repository: the Dockerfile, the rootfs/ overlay, the patches in patches/, the
+workflows, README and artwork. It does not relicense the software inside the
+image. Each bundled component keeps its own license:
+
+  * rustdesk-server (hbbs, hbbr, rustdesk-utils)   AGPL-3.0
+      https://github.com/rustdesk/rustdesk-server
+      built from the fork https://github.com/lejianwen/rustdesk-server
+      with the patches in patches/ applied
+  * rustdesk-api (web console, address book API,   MIT
+    web client)
+      https://github.com/lejianwen/rustdesk-api
+  * s6-overlay                                      ISC
+      https://github.com/just-containers/s6-overlay
+  * Alpine Linux base packages                      various
+      https://alpinelinux.org/
+
+The s6 service scripts under rootfs/etc/s6-overlay come from the docker/ folder
+of lejianwen/rustdesk-server.
+
+RustDesk is a trademark of Purslane Ltd. This image is not affiliated with or
+endorsed by the RustDesk project.

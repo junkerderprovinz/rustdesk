@@ -1,0 +1,6 @@
+# Everything under rootfs/ ships into the Linux image, including extensionless s6
+# scripts, so the tree is pinned to LF and a CRLF checkout cannot break a shebang.
+rootfs/** text eol=lf
+*.sh text eol=lf
+patches/*.patch text eol=lf
+.github/assets/banner-raw.txt text eol=lf

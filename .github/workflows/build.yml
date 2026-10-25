@@ -1,0 +1,316 @@
+name: Build & Push
+
+# Builds the RustDesk server image (hbbs and hbbr compiled from lejianwen's fork
+# with patches/, on top of lejianwen's rustdesk-api image) and pushes it to
+#   * GitHub Container Registry  (ghcr.io/junkerderprovinz/rustdesk)
+#   * Docker Hub                 (docker.io/<DOCKERHUB_USERNAME>/rustdesk),
+#     once the DOCKERHUB_USERNAME variable and the DOCKERHUB_TOKEN secret are
+#     both set; until then the build stays GHCR-only.
+#
+# One native build job per platform, because compiling the Rust server under QEMU
+# takes far longer. Each job boots its image as a smoke gate, pushes by digest,
+# and the merge job assembles the multi-arch manifest under the final tags.
+#
+# Triggers:
+#   * push to main           → edge, main, sha-<short>
+#   * tag v*.*.*             → <version>, <major>, <major.minor>, and latest
+#                              when that tag is the newest release
+#   * weekly cron (Sun 04 UTC), which picks up base image updates
+#   * manual workflow_dispatch
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*.*.*' ]
+  schedule:
+    - cron: '0 4 * * 0'
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: rustdesk
+
+jobs:
+  build:
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - platform: linux/amd64
+            arch: amd64
+            runner: ubuntu-latest
+          - platform: linux/arm64
+            arch: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: read
+      packages: write
+      security-events: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
+
+      - name: Login to GHCR
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (labels)
+        id: meta
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
+
+      - name: Build ${{ matrix.arch }} image for smoke test
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: ${{ matrix.platform }}
+          push: false
+          load: true
+          tags: rustdesk:smoke-${{ matrix.arch }}
+          cache-from: type=gha,scope=build-${{ matrix.arch }}
+
+      # The image has to carry the patched hbbs, start all three services and
+      # answer on the console and the web client before anything is pushed.
+      - name: Smoke test (${{ matrix.arch }})
+        run: |
+          set -euo pipefail
+          img=rustdesk:smoke-${{ matrix.arch }}
+          docker run --rm --entrypoint sh "$img" -c 'grep -q "Changed id" /usr/bin/hbbs' \
+            || { echo "❌ hbbs in the image lacks the change-id patch"; exit 1; }
+          name=rd-smoke
+          docker run -d --name "$name" -e RELAY=127.0.0.1:21117 -p 21114:21114 "$img"
+          deadline=$((SECONDS + 90))
+          while [ "$SECONDS" -lt "$deadline" ]; do
+            console=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 http://localhost:21114/_admin/ || true)
+            client=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 http://localhost:21114/webclient/ || true)
+            procs=$(docker exec "$name" sh -c 'pgrep -x hbbs >/dev/null && pgrep -x hbbr >/dev/null && echo up' || true)
+            if [ "$console" = 200 ] && [ "$client" = 200 ] && [ "$procs" = up ]; then
+              docker logs "$name" 2>&1 | grep -q 'RustDesk for Unraid' \
+                || { echo "❌ init banner missing from the log"; docker logs "$name"; exit 1; }
+              echo "✅ console, web client, hbbs and hbbr up after ${SECONDS}s"
+              docker rm -f "$name" >/dev/null
+              exit 0
+            fi
+            if [ -z "$(docker ps -q --filter "name=$name")" ]; then
+              echo "❌ container exited early, logs:"; docker logs "$name" || true
+              docker rm -f "$name" >/dev/null; exit 1
+            fi
+            sleep 2
+          done
+          echo "❌ not up within 90s (console=$console client=$client hbbs/hbbr=$procs), logs:"
+          docker logs "$name" || true
+          docker rm -f "$name" >/dev/null
+          exit 1
+
+      - name: Scan image for CVEs (Trivy)
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: rustdesk:smoke-${{ matrix.arch }}
+          format: sarif
+          output: trivy-results-${{ matrix.arch }}.sarif
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: "0"
+
+      - name: Upload Trivy results to the Security tab
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4
+        with:
+          sarif_file: trivy-results-${{ matrix.arch }}.sarif
+          category: trivy-${{ matrix.arch }}
+
+      # Push this arch by digest; the merge job assembles the multi-arch
+      # manifest under the final tags.
+      - name: Push ${{ matrix.arch }} by digest
+        id: push
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: ${{ matrix.platform }}
+          labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=image,name=ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=true
+          cache-from: type=gha,scope=build-${{ matrix.arch }}
+          cache-to: type=gha,mode=max,scope=build-${{ matrix.arch }}
+
+      - name: Export digest
+        run: |
+          mkdir -p /tmp/digests
+          digest="${{ steps.push.outputs.digest }}"
+          touch "/tmp/digests/${digest#sha256:}"
+
+      - name: Upload digest
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: digests-${{ matrix.arch }}
+          path: /tmp/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  merge:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Download digests
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          path: /tmp/digests
+          pattern: digests-*
+          merge-multiple: true
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
+
+      - name: Login to GHCR
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Docker Hub mirror, active once DOCKERHUB_USERNAME (variable) and
+      # DOCKERHUB_TOKEN (secret) are both set. Until then this step is skipped
+      # and the manifest stays GHCR-only.
+      - name: Login to Docker Hub
+        if: ${{ vars.DOCKERHUB_USERNAME != '' }}
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Is the tag being built the newest release in this repo?
+      #
+      # `latest` moves only for a tag build, and only for the highest version
+      # tag (see the tag list below). Both halves are needed and they guard
+      # different accidents: gating on the tag keeps an unreleased merge to main
+      # away from everyone who pulls `latest`, and gating on "newest" keeps a
+      # re-cut of an older version from dragging `latest` backwards onto it.
+      #
+      # This job assembles manifests from digests and never checks the repo out,
+      # so the tags are read straight from the remote. `sort -V` orders versions
+      # rather than strings, so v1.10.0 beats v1.9.0 instead of losing to it.
+      - name: Is this the newest release tag?
+        id: newest
+        if: github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          newest=$(git ls-remote --tags --refs \
+            "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" 'v*.*.*' \
+            | sed 's#.*refs/tags/##' | sort -V | tail -1)
+          echo "this tag: ${GITHUB_REF_NAME}"
+          echo "newest:   ${newest}"
+          if [ "$newest" = "${GITHUB_REF_NAME}" ]; then
+            echo "is_newest=true" >> "$GITHUB_OUTPUT"
+            echo "-> this build moves :latest"
+          else
+            echo "is_newest=false" >> "$GITHUB_OUTPUT"
+            echo "-> this build leaves :latest where it is"
+          fi
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6
+        with:
+          images: |
+            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
+            name=docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }},enable=${{ vars.DOCKERHUB_USERNAME != '' }}
+          # `latest` is set only by a tag build of the newest release (see the
+          # step above). {{is_default_branch}} would not do: it is true for
+          # every push to main, and metadata-action counts a tag cut from the
+          # default branch as the default branch too.
+          #
+          # The tip of main, including the weekly cron rebuild, goes to `edge`:
+          # built, smoke-tested and pullable, but nobody gets it without asking
+          # for it. `edge` names the branch instead of using
+          # {{is_default_branch}} for the same reason, since `edge` on a
+          # release build would make the name meaningless.
+          #
+          # {{major}} and {{major}}.{{minor}} follow whichever tag built last,
+          # so re-cutting an old version drags `2` back with it. That is right
+          # for a normal forward release and rare enough otherwise to fix by
+          # hand: re-run the newest tag's build and check that latest, 2 and
+          # 2.<minor> resolve to the same digest.
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=schedule,pattern=weekly
+            type=raw,value=edge,enable=${{ github.ref_type == 'branch' && github.ref_name == github.event.repository.default_branch }}
+            type=raw,value=latest,enable=${{ github.ref_type == 'tag' && steps.newest.outputs.is_newest == 'true' }}
+            type=sha,format=short
+
+      # Assemble the multi-arch manifest for every tag in both registries from
+      # the per-arch digests on GHCR; imagetools copies the platform images to
+      # Docker Hub where needed.
+      - name: Create multi-arch manifests
+        working-directory: /tmp/digests
+        # The tags are read from DOCKER_METADATA_OUTPUT_TAGS instead of being
+        # interpolated into the script with ${{ }}, to keep them out of the
+        # shell source.
+        run: |
+          set -euo pipefail
+          src="ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}"
+          sources=""
+          for d in *; do sources="$sources ${src}@sha256:${d}"; done
+          echo "sources:${sources}"
+          tagargs=""
+          while IFS= read -r tag; do
+            [ -n "$tag" ] && tagargs="$tagargs -t $tag"
+          done <<< "$DOCKER_METADATA_OUTPUT_TAGS"
+          echo "tags:${tagargs}"
+          # Cross-registry copy (GHCR -> Docker Hub) can hit a transient HTTP/2
+          # PROTOCOL_ERROR on large layers; retry a few times before failing.
+          n=0
+          until docker buildx imagetools create ${tagargs} ${sources}; do
+            n=$((n + 1))
+            if [ "$n" -ge 4 ]; then echo "imagetools create failed after $n attempts"; exit 1; fi
+            echo "imagetools create failed (attempt $n); retrying in $((n * 15))s..."
+            sleep $((n * 15))
+          done
+
+      - name: Inspect
+        run: |
+          docker buildx imagetools inspect ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
+
+      # Mirror the README to the Docker Hub repo's full description, with
+      # relative image and link paths completed to absolute ones so they render
+      # there. Skipped while DOCKERHUB_TOKEN is unset, so a missing credential
+      # never fails the build.
+      - name: Checkout (README for Docker Hub sync)
+        if: ${{ vars.DOCKERHUB_USERNAME != '' && github.event_name != 'pull_request' }}
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Docker Hub description sync ready?
+        id: dhdesc
+        if: ${{ vars.DOCKERHUB_USERNAME != '' && github.event_name != 'pull_request' }}
+        env:
+          PW: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          if [ -n "$PW" ]; then echo "go=true" >> "$GITHUB_OUTPUT"; else echo "DOCKERHUB_TOKEN not set, skipping Docker Hub description sync"; echo "go=false" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Sync README to Docker Hub
+        if: ${{ steps.dhdesc.outputs.go == 'true' }}
+        uses: peter-evans/dockerhub-description@1b9a80c056b620d92cedb9d9b5a223409c68ddfa # v5
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: ${{ vars.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}
+          short-description: "Self-hosted RustDesk server for Unraid with web console, shared address book and web client."
+          enable-url-completion: true

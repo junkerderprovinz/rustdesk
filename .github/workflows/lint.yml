@@ -1,0 +1,41 @@
+name: Lint
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  hadolint:
+    name: Hadolint (Dockerfile)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: hadolint/hadolint-action@06be81baf89a55ffd0e24b8f04a4185738dd3387 # v3.5.0
+        with:
+          dockerfile: Dockerfile
+          # DL3018 (pin apk versions): the build packages follow the pinned
+          #         Rust image's Alpine release.
+          ignore: DL3018
+          failure-threshold: warning
+
+  shellcheck:
+    name: ShellCheck (shell scripts)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Run shellcheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+          # The *.sh helpers and the extensionless s6 scripts; the with-contenv
+          # ones carry a "shellcheck shell=sh" directive.
+          SCRIPTS=$(find rootfs -type f \( -name '*.sh' -o -name 'run' -o -name 'up.real' \))
+          if [ -z "${SCRIPTS}" ]; then
+            echo "ERROR: no shell scripts found, the find pattern is broken." >&2
+            exit 1
+          fi
+          # shellcheck disable=SC2086
+          shellcheck -S warning -x -e SC1091 ${SCRIPTS}

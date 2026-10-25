@@ -1,0 +1,28 @@
+# RustDesk server with web console, address book and web client.
+# RELAY and the RUSTDESK_API_RUSTDESK_* addresses must be the name or IP your
+# clients reach this server under.
+services:
+  rustdesk:
+    image: ghcr.io/junkerderprovinz/rustdesk:latest
+    container_name: rustdesk
+    restart: unless-stopped
+    ports:
+      - "21114:21114"      # web console and web client
+      - "21115:21115"      # NAT type test
+      - "21116:21116"      # ID server
+      - "21116:21116/udp"
+      - "21117:21117"      # relay
+      - "21118:21118"      # ID server, websocket
+      - "21119:21119"      # relay, websocket
+    environment:
+      TZ: Europe/Vienna
+      RELAY: rustdesk.example.com:21117
+      ENCRYPTED_ONLY: "1"
+      MUST_LOGIN: "N"
+      RUSTDESK_API_RUSTDESK_ID_SERVER: rustdesk.example.com:21116
+      RUSTDESK_API_RUSTDESK_RELAY_SERVER: rustdesk.example.com:21117
+      RUSTDESK_API_RUSTDESK_API_SERVER: http://rustdesk.example.com:21114
+      RUSTDESK_API_LANG: en
+    volumes:
+      - ./data:/data          # server keys and device database
+      - ./api-data:/app/data  # console users, address books, logs
