@@ -56,18 +56,34 @@ If it has earned a place on your server or computer, toss a coin to your knight:
 
 ## Table of Contents
 
-1. [What it does](#1-what-it-does)
-2. [Getting started](#2-getting-started)
-3. [Connecting your devices](#3-connecting-your-devices)
-4. [Changing a device's ID](#4-changing-a-devices-id)
-5. [Moving from another RustDesk server](#5-moving-from-another-rustdesk-server)
-6. [What is inside](#6-what-is-inside)
-7. [How AI is used here](#7-how-ai-is-used-here)
-8. [Support this project](#8-support-this-project)
+1. [What it looks like](#1-what-it-looks-like)
+2. [What it does](#2-what-it-does)
+3. [How it compares](#3-how-it-compares)
+4. [Getting started](#4-getting-started)
+5. [Connecting your devices](#5-connecting-your-devices)
+6. [Changing a device's ID](#6-changing-a-devices-id)
+7. [Moving from another RustDesk server](#7-moving-from-another-rustdesk-server)
+8. [What is inside](#8-what-is-inside)
+9. [How AI is used here](#9-how-ai-is-used-here)
+10. [Support this project](#10-support-this-project)
 
 <br>
 
-## 1. What it does
+## 1. What it looks like
+
+<p align="center">
+  <img src=".github/assets/screenshots/rustdesk-1.png" alt="Devices in the web console" width="90%">
+  <br><em>Every device that registered with your server, with its system, its last address and one click to connect.</em>
+</p>
+
+<p align="center">
+  <img src=".github/assets/screenshots/rustdesk-2.png" alt="Address book in the web console" width="90%">
+  <br><em>The address book a user sees in every RustDesk client they log in to.</em>
+</p>
+
+<br>
+
+## 2. What it does
 
 - `hbbs` hands out IDs and introduces your devices to each other. `hbbr` relays the session when two devices cannot reach each other directly. By default the server accepts encrypted connections only.
 - The web console on port 21114, at `/_admin/`, lists devices, users, groups and address books, keeps the connection and file transfer logs, and holds the server's settings.
@@ -78,7 +94,24 @@ If it has earned a place on your server or computer, toss a coin to your knight:
 
 <br>
 
-## 2. Getting started
+## 3. How it compares
+
+| | **This image** | ich777 AIO | Official server | RustDesk Server Pro |
+|---|:---:|:---:|:---:|:---:|
+| ID server and relay | ✅ | ✅ | ✅ | ✅ |
+| Web console | ✅ | ❌ | ❌ | ✅ |
+| Accounts and shared address book | ✅ | ❌ | ❌ | ✅ |
+| Web client | ✅ | ❌ | ❌ | ✅ |
+| Change a device's ID | ✅ | ❌ | ❌ | ✅ |
+| Multi-arch | amd64 + arm64 | amd64 | amd64 + arm64 + armv7 | amd64 + arm64 + armv7 |
+| Licence | AGPL-3.0 | AGPL-3.0 | AGPL-3.0 | proprietary |
+| Price | free | free | free | paid subscription |
+
+The official server is `rustdesk/rustdesk-server`; ich777's all-in-one image is the one in Unraid's Community Applications.
+
+<br>
+
+## 4. Getting started
 
 **Unraid:** install the template from the [junkerderprovinz feed](https://github.com/junkerderprovinz/unraid-apps) and fill in the address your clients use to reach the server (a DNS name or IP) in the four address fields.
 
@@ -100,7 +133,7 @@ Ports: 21114 (console and web client), 21115 (NAT test), 21116 TCP and UDP (ID s
 
 <br>
 
-## 3. Connecting your devices
+## 5. Connecting your devices
 
 In the RustDesk client, open **Settings → Network → ID/Relay server** and enter:
 
@@ -115,19 +148,19 @@ With the API server set, the client shows a login. Log in with a user from the c
 
 <br>
 
-## 4. Changing a device's ID
+## 6. Changing a device's ID
 
 The client's **Change ID** works against this server. The server renames the device only when the request comes from the machine that registered the old ID, and only to an ID that is free and follows RustDesk's format (6 to 16 characters, starting with a letter). The stock open-source server answers the same request with "not supported".
 
 <br>
 
-## 5. Moving from another RustDesk server
+## 7. Moving from another RustDesk server
 
 Your devices keep their IDs and trust the new server when it uses the same key pair. Stop the old container and copy `id_ed25519`, `id_ed25519.pub` and `db_v2.sqlite3` from its data folder into this container's `/data` before the first start. The key the clients use stays the same, so nothing has to change on the devices.
 
 <br>
 
-## 6. What is inside
+## 8. What is inside
 
 - `hbbs`, `hbbr` and `rustdesk-utils` built from [lejianwen/rustdesk-server](https://github.com/lejianwen/rustdesk-server), a fork of [rustdesk-server](https://github.com/rustdesk/rustdesk-server) that talks to the API, with the patches in [patches/](patches) applied.
 - [lejianwen/rustdesk-api](https://github.com/lejianwen/rustdesk-api) for the console, the accounts, the address book and the web client.
@@ -137,7 +170,7 @@ The newer web client that older rustdesk-api images shipped as `/webclient2` was
 
 <br>
 
-## 7. How AI is used here
+## 9. How AI is used here
 
 One knight builds this, and AI is one of the tools I work with, the same way I work with an editor or a compiler. It helps me write code and documentation and it checks my work, and that saves me a good many evenings. It does not make the decisions, though. I read and understand everything before it ships, and if something here breaks, that is on me and not on the tool.
 
@@ -145,7 +178,7 @@ You do not have to take my word for it. The code is open and every release note 
 
 <br>
 
-## 8. Support this project
+## 10. Support this project
 
 Bugs, ideas or feature requests? Please [open a GitHub issue](https://github.com/junkerderprovinz/rustdesk/issues).
 
