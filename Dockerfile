@@ -10,6 +10,8 @@ FROM ${RUST_IMAGE} AS server
 # The patches in patches/ are made against this commit.
 ARG SERVER_REPO=https://github.com/lejianwen/rustdesk-server.git
 ARG SERVER_COMMIT=fb8b5b9cf494d045f0feb370d83913b1a7506388
+# The build tools follow the pinned Rust image's Alpine release.
+# hadolint ignore=DL3018
 RUN apk add --no-cache git musl-dev perl make
 WORKDIR /src
 RUN git init -q . \
