@@ -30,6 +30,12 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
 FROM ${API_IMAGE}
 ARG S6_OVERLAY_VERSION=3.2.0.0
 ARG TARGETARCH
+
+# The API image ships the Alpine packages of its build date, so OpenSSL and
+# friends miss later security fixes. Upgrading before the s6 download keeps that
+# layer cached.
+RUN apk upgrade --no-cache
+
 LABEL org.opencontainers.image.source="https://github.com/junkerderprovinz/rustdesk"
 LABEL org.opencontainers.image.description="Self-hosted RustDesk server with web console, address book and web client"
 LABEL org.opencontainers.image.licenses="AGPL-3.0-only"
