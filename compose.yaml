@@ -3,7 +3,7 @@
 # clients reach this server under.
 services:
   rustdesk:
-    image: ghcr.io/junkerderprovinz/rustdesk:latest@sha256:2e5d6b12059ad24c5a87018ae78dd3e4e1fa5cefb1ece3006aad7d9dac366f22
+    image: ghcr.io/junkerderprovinz/rustdesk:latest
     container_name: rustdesk
     restart: unless-stopped
     ports:
