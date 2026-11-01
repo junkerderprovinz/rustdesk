@@ -2,7 +2,7 @@
  * Generates the theme-adaptive pair of README banners and the CA icon:
  *   rustdesk-banner.svg / .png       light, 1600x500, white background, dark wordmark
  *   rustdesk-banner-dark.svg / .png  dark, 1600x500, GitHub dark background, light wordmark
- *   icon.png                         512x512, the mark on white
+ *   icon.png                         512x512, the mark on transparency
  * The mark is RustDesk's own (res/logo.svg upstream); its blue gradient reads on
  * either background, so only the background and text colours flip.
  *
@@ -110,12 +110,12 @@ for (const t of THEMES) {
   console.log(`wrote rustdesk-banner${t.suffix}.svg + .png`);
 }
 
-// CA icon: the mark on a solid white square with some margin.
-const IS = 512, IM = 56;
+// CA icon: the bare mark on transparency. CA draws the image as is, so a filled
+// square shows up as a hard-edged tile next to the other apps' logos.
+const IS = 512, IM = 32;
 const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="${IS}" height="${IS}" viewBox="0 0 ${IS} ${IS}">
-  <rect width="${IS}" height="${IS}" fill="#ffffff"/>
   ${placed(IM, IM, IS - 2 * IM)}
 </svg>
 `;
-writeFileSync(join(__dir, "icon.png"), new Resvg(iconSvg, { fitTo: { mode: "width", value: IS }, background: "#ffffff" }).render().asPng());
+writeFileSync(join(__dir, "icon.png"), new Resvg(iconSvg, { fitTo: { mode: "width", value: IS } }).render().asPng());
 console.log("wrote icon.png");
