@@ -3,7 +3,7 @@
 # lejianwen's fork with the patches in patches/, on top of lejianwen's rustdesk-api
 # image, which brings the web console, user login, the shared address book and the
 # web client. s6-overlay runs all three.
-ARG RUST_IMAGE=rust:1.99.1-alpine3.24@sha256:b1d5dd5a22a09404d3e798c0cf051b689077360374eb505fa5bb93c479693d87
+ARG RUST_IMAGE=rust:1.99.1-alpine3.24@sha256:7e9e2d068a107a2adafd19930011178d14a78326053cd4c3a9f7ad3fd049557d
 ARG API_IMAGE=lejianwen/rustdesk-api:v2.7@sha256:ed35016339d3bcadf15c7bb3ae8490af1e3950c33f58fd2261ae009b94f5de45
 
 FROM ${RUST_IMAGE} AS server
