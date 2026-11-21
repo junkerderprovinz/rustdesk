@@ -29,7 +29,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
 
 FROM ${API_IMAGE}
 # renovate: datasource=github-releases depName=just-containers/s6-overlay versioning=loose
-ARG S6_OVERLAY_VERSION=3.2.0.0
+ARG S6_OVERLAY_VERSION=3.2.3.2
 ARG TARGETARCH
 
 # The API image ships the Alpine packages of its build date, so OpenSSL and
