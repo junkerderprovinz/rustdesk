@@ -6,9 +6,11 @@
  * The mark is RustDesk's own (res/logo.svg upstream); its blue gradient reads on
  * either background, so only the background and text colours flip.
  *
- * Name and claim use DejaVu Sans, fetched at runtime from the dejavu-fonts-ttf npm
- * package via jsDelivr, cached in the OS temp dir and never committed. The text
- * becomes SVG paths (opentype.js), so the SVG is self-contained.
+ * The name uses DejaVu Sans Bold, fetched at runtime from the dejavu-fonts-ttf npm
+ * package via jsDelivr and cached in the OS temp dir. The claim uses Bree Light,
+ * read as TTF from HOUSE_FONTS (default %LOCALAPPDATA%\halleluja-fonts). Neither
+ * is committed. The text becomes SVG paths (opentype.js), so the SVG is
+ * self-contained.
  *
  * Deps: `npm i -g @resvg/resvg-js opentype.js`. Run: node .github/assets/gen-banner.mjs
  */
@@ -73,7 +75,9 @@ async function loadFont(url, cacheName) {
 }
 const DEJAVU = "https://cdn.jsdelivr.net/npm/dejavu-fonts-ttf@2.37.3/ttf";
 const nameFont = await loadFont(`${DEJAVU}/DejaVuSans-Bold.ttf`, "DejaVuSans-Bold");
-const claimFont = await loadFont(`${DEJAVU}/DejaVuSans.ttf`, "DejaVuSans-Book");
+// The house typeface is licensed, so it is read from a local folder and never committed.
+const fonts = process.env.HOUSE_FONTS ?? join(process.env.LOCALAPPDATA ?? tmpdir(), "halleluja-fonts");
+const claimFont = opentype.parse(readFileSync(join(fonts, "bree-light.ttf")).buffer);
 
 const startX = 165; // left-anchored (house banner standard)
 const LX = startX, LY = (H - LH) / 2;
