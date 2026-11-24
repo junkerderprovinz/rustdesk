@@ -179,6 +179,8 @@ docker exec rustdesk /app/apimain reset-admin-pwd <new password>
 
 Ports: 21114 (console and web client), 21115 (NAT test), 21116 TCP and UDP (ID server), 21117 (relay), 21118 and 21119 (websocket variants for the web client). Forward 21115 to 21117 if devices outside your network should connect; the console does not need to be reachable from outside.
 
+The web client in the browser talks to the server directly on 21118 and 21119, so the browser has to reach both. Over plain HTTP, such as `http://<server>:21114/webclient/` at home, that is all it needs. Over HTTPS the browser asks for `wss://<server>:21118` and `wss://<server>:21119`, so your reverse proxy has to accept TLS on those two ports and pass the websocket on to the container. Without that the web client loads but stops with "connection error".
+
 <br>
 
 <p><a id="7-connecting-your-devices" href="#7-connecting-your-devices"><picture><source media="(prefers-color-scheme: dark)" srcset=".github/assets/sections/7-connecting-your-devices-dark.svg"><img src=".github/assets/sections/7-connecting-your-devices.svg" alt="7. Connecting your devices" width="100%"></picture></a></p>

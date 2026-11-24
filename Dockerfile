@@ -55,6 +55,12 @@ RUN set -eux; \
     rm /tmp/*.tar.xz; \
     ln -sf /run /var/run
 
+# The console's Web Client button opens /webclient2/, which the image does not
+# serve. The web client lives at /webclient/.
+RUN grep -rl '/webclient2/' /app/resources/admin > /tmp/webclient2 \
+    && while read -r f; do sed -i 's#/webclient2/#/webclient/#g' "$f"; done < /tmp/webclient2 \
+    && rm /tmp/webclient2
+
 COPY --from=server /out/ /usr/bin/
 COPY rootfs/ /
 COPY .github/assets/banner-raw.txt /usr/local/share/banner-raw.txt
