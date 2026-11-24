@@ -61,6 +61,10 @@ RUN grep -rl '/webclient2/' /app/resources/admin > /tmp/webclient2 \
     && while read -r f; do sed -i 's#/webclient2/#/webclient/#g' "$f"; done < /tmp/webclient2 \
     && rm /tmp/webclient2
 
+# The api service writes server.js at start with this server's address and key.
+RUN grep -q '<script src="/webclient-config/index.js"></script>' /app/resources/web/index.html \
+    && sed -i 's#<script src="/webclient-config/index.js"></script>#&\n    <script src="server.js"></script>#' /app/resources/web/index.html
+
 COPY --from=server /out/ /usr/bin/
 COPY rootfs/ /
 COPY .github/assets/banner-raw.txt /usr/local/share/banner-raw.txt

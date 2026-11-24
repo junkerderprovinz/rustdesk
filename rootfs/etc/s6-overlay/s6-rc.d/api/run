@@ -2,4 +2,17 @@
 # shellcheck shell=sh
 sleep 3
 cd /app || exit 1
+
+# The web client learns its ID server and key only from a login and dials
+# RustDesk's public servers until then, so hand it this server's from the start.
+for _ in 1 2 3 4 5 6 7 8 9 10; do
+  [ -f /data/id_ed25519.pub ] && break
+  sleep 1
+done
+: > resources/web/server.js
+if [ -n "${RUSTDESK_API_RUSTDESK_ID_SERVER}" ] && [ -f /data/id_ed25519.pub ]; then
+  printf "if (!localStorage.getItem('custom-rendezvous-server') || !localStorage.getItem('key')) {\n  localStorage.setItem('custom-rendezvous-server', '%s');\n  localStorage.setItem('key', '%s');\n}\n" \
+    "${RUSTDESK_API_RUSTDESK_ID_SERVER}" "$(cat /data/id_ed25519.pub)" > resources/web/server.js
+fi
+
 ./apimain
