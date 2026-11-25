@@ -50,42 +50,49 @@ to RustDesk's own clients.
   <picture><source media="(prefers-color-scheme: dark)" srcset=".github/assets/sections/group-server-dark.svg"><img src=".github/assets/sections/group-server.svg" alt="Server" width="100%"></picture>
 </p>
 <p align="center">
-  <a href="https://unraid.net/community/apps?q=rustdesk"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=7ea36a986ec3#svgView(viewBox(0,0,841.9,245.3))" alt="Install from Unraid&#x27;s Community Applications" width="160" height="46.618"></a>
+  <a href="https://unraid.net/community/apps?q=rustdesk"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=863f30acbb7b#svgView(viewBox(0,0,841.9,245.3))" alt="Install from Unraid&#x27;s Community Applications" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://mos-official.net/apps.html?search=RustDesk"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=7ea36a986ec3#svgView(viewBox(866,0,841.9,245.3))" alt="Install from the MOS Hub" width="160" height="46.618"></a>
+  <a href="https://mos-official.net/apps.html?search=RustDesk"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=863f30acbb7b#svgView(viewBox(866,0,841.9,245.3))" alt="Install from the MOS Hub" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://github.com/junkerderprovinz/zimaos-apps#install"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=7ea36a986ec3#svgView(viewBox(1732,0,841.9,245.3))" alt="Install from the ZimaOS and CasaOS store" width="160" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/zimaos-apps#install"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=863f30acbb7b#svgView(viewBox(1732,0,841.9,245.3))" alt="Install from the ZimaOS and CasaOS store" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://github.com/junkerderprovinz/umbrel-apps#install"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=7ea36a986ec3#svgView(viewBox(2598,0,841.9,245.3))" alt="Install from the umbrelOS community app store" width="160" height="46.618"></a>
+  <a href="https://github.com/junkerderprovinz/umbrel-apps#install"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=863f30acbb7b#svgView(viewBox(2598,0,841.9,245.3))" alt="Install from the umbrelOS community app store" width="160" height="46.618"></a>
 </p>
 <p align="center">
-  <a href="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/compose.yaml"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=7ea36a986ec3#svgView(viewBox(3464,0,841.9,245.3))" alt="Download the docker-compose file" width="160" height="46.618"></a>
+  <a href="#proxmox-ve"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=863f30acbb7b#svgView(viewBox(3464,0,841.9,245.3))" alt="Run it on Proxmox VE" width="160" height="46.618"></a>
   &nbsp;
-  <a href="#proxmox-ve"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=7ea36a986ec3#svgView(viewBox(4330,0,841.9,245.3))" alt="Run it on Proxmox VE" width="160" height="46.618"></a>
+  <a href="#synology"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=863f30acbb7b#svgView(viewBox(4330,0,841.9,245.3))" alt="Run it on a Synology NAS" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://github.com/junkerderprovinz/rustdesk/releases/latest"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=7ea36a986ec3#svgView(viewBox(5196,0,841.9,245.3))" alt="Download the source archive" width="160" height="46.618"></a>
+  <a href="#qnap"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=863f30acbb7b#svgView(viewBox(5196,0,841.9,245.3))" alt="Run it on a QNAP NAS" width="160" height="46.618"></a>
+  &nbsp;
+  <a href="#ugreen"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=863f30acbb7b#svgView(viewBox(6062,0,841.9,245.3))" alt="Run it on a UGREEN NAS" width="160" height="46.618"></a>
+</p>
+<p align="center">
+  <a href="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/compose.yaml"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=863f30acbb7b#svgView(viewBox(6928,0,841.9,245.3))" alt="Download the docker-compose file" width="160" height="46.618"></a>
+  &nbsp;
+  <a href="https://github.com/junkerderprovinz/rustdesk/releases/latest"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=863f30acbb7b#svgView(viewBox(7794,0,841.9,245.3))" alt="Download the source archive" width="160" height="46.618"></a>
 </p>
 <br>
 <p align="center">
   <picture><source media="(prefers-color-scheme: dark)" srcset=".github/assets/sections/group-desktop-dark.svg"><img src=".github/assets/sections/group-desktop.svg" alt="Desktop" width="100%"></picture>
 </p>
 <p align="center">
-  <a href="https://github.com/rustdesk/rustdesk/releases/latest"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=7ea36a986ec3#svgView(viewBox(6062,0,841.9,245.3))" alt="Download for Windows" width="160" height="46.618"></a><a href="https://github.com/rustdesk/rustdesk/releases/latest"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=7ea36a986ec3#svgView(viewBox(6928,0,457.783,245.3))" alt="Download for Windows on ARM" width="87" height="46.618"></a>
+  <a href="https://github.com/rustdesk/rustdesk/releases/latest"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=863f30acbb7b#svgView(viewBox(8660,0,841.9,245.3))" alt="Download for Windows" width="160" height="46.618"></a><a href="https://github.com/rustdesk/rustdesk/releases/latest"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=863f30acbb7b#svgView(viewBox(9526,0,457.783,245.3))" alt="Download for Windows on ARM" width="87" height="46.618"></a>
   &nbsp;
-  <a href="https://github.com/rustdesk/rustdesk/releases/latest"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=7ea36a986ec3#svgView(viewBox(7410,0,841.9,245.3))" alt="Download for macOS on Apple silicon or Intel" width="160" height="46.618"></a>
+  <a href="https://github.com/rustdesk/rustdesk/releases/latest"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=863f30acbb7b#svgView(viewBox(10008,0,841.9,245.3))" alt="Download for macOS on Apple silicon or Intel" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://github.com/rustdesk/rustdesk/releases/latest"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=7ea36a986ec3#svgView(viewBox(8276,0,841.9,245.3))" alt="Download for Linux" width="160" height="46.618"></a><a href="https://github.com/rustdesk/rustdesk/releases/latest"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=7ea36a986ec3#svgView(viewBox(9142,0,457.783,245.3))" alt="Download for Linux on ARM" width="87" height="46.618"></a>
+  <a href="https://github.com/rustdesk/rustdesk/releases/latest"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=863f30acbb7b#svgView(viewBox(10874,0,841.9,245.3))" alt="Download for Linux" width="160" height="46.618"></a><a href="https://github.com/rustdesk/rustdesk/releases/latest"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=863f30acbb7b#svgView(viewBox(11740,0,457.783,245.3))" alt="Download for Linux on ARM" width="87" height="46.618"></a>
 </p>
 <br>
 <p align="center">
   <picture><source media="(prefers-color-scheme: dark)" srcset=".github/assets/sections/group-phone-dark.svg"><img src=".github/assets/sections/group-phone.svg" alt="Phone" width="100%"></picture>
 </p>
 <p align="center">
-  <a href="https://f-droid.org/packages/com.carriez.flutter_hbb/"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=7ea36a986ec3#svgView(viewBox(9624,0,841.9,245.3))" alt="Get it on F-Droid" width="160" height="46.618"></a>
+  <a href="https://f-droid.org/packages/com.carriez.flutter_hbb/"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=863f30acbb7b#svgView(viewBox(12222,0,841.9,245.3))" alt="Get it on F-Droid" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://github.com/rustdesk/rustdesk/releases/latest"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=7ea36a986ec3#svgView(viewBox(10490,0,841.9,245.3))" alt="Download the Android app" width="160" height="46.618"></a>
+  <a href="https://github.com/rustdesk/rustdesk/releases/latest"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=863f30acbb7b#svgView(viewBox(13088,0,841.9,245.3))" alt="Download the Android app" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://apps.apple.com/app/rustdesk-remote-desktop/id1581225015"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=7ea36a986ec3#svgView(viewBox(11356,0,841.9,245.3))" alt="Download on the App Store" width="160" height="46.618"></a>
+  <a href="https://apps.apple.com/app/rustdesk-remote-desktop/id1581225015"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=863f30acbb7b#svgView(viewBox(13954,0,841.9,245.3))" alt="Download on the App Store" width="160" height="46.618"></a>
 </p>
 <!-- /download-buttons -->
 
@@ -103,11 +110,11 @@ If it has earned a place on your server or computer, toss a coin to your knight:
 
 <!-- give-buttons: written by scripts/gen_download_buttons.py -->
 <p align="center">
-  <a href="https://buymeacoffee.com/junkerderprovinz"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=7ea36a986ec3#svgView(viewBox(12222,0,841.9,245.3))" alt="Buy me a coffee" width="160" height="46.618"></a>
+  <a href="https://buymeacoffee.com/junkerderprovinz"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=863f30acbb7b#svgView(viewBox(14820,0,841.9,245.3))" alt="Buy me a coffee" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://www.paypal.com/donate/?hosted_button_id=76FVV52TKXTUS"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=7ea36a986ec3#svgView(viewBox(13088,0,841.9,245.3))" alt="PayPal" width="160" height="46.618"></a>
+  <a href="https://www.paypal.com/donate/?hosted_button_id=76FVV52TKXTUS"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=863f30acbb7b#svgView(viewBox(15686,0,841.9,245.3))" alt="PayPal" width="160" height="46.618"></a>
   &nbsp;
-  <a href="https://junkerderprovinz.github.io/junkerderprovinz/"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=7ea36a986ec3#svgView(viewBox(13954,0,841.9,245.3))" alt="Donate with crypto" width="160" height="46.618"></a>
+  <a href="https://junkerderprovinz.github.io/junkerderprovinz/"><img src="https://raw.githubusercontent.com/junkerderprovinz/rustdesk/main/.github/assets/download-buttons/buttons.svg?v=863f30acbb7b#svgView(viewBox(16552,0,841.9,245.3))" alt="Donate with crypto" width="160" height="46.618"></a>
 </p>
 <!-- /give-buttons -->
 
@@ -161,9 +168,9 @@ The official server is `rustdesk/rustdesk-server`; ich777's all-in-one image is 
 
 **Docker Compose:** take [compose.yaml](compose.yaml), replace `rustdesk.example.com` with your server's address and run `docker compose up -d`.
 
-- **Synology:** in Container Manager, create a project from the file (DSM 7.2 or newer).
-- **Ugreen:** in the Docker app of UGOS Pro, create a project from the file.
-- **QNAP:** in Container Station, create an application from the file.
+- **Synology:** see [Synology](#synology) below.
+- **QNAP:** see [QNAP](#qnap) below.
+- **UGREEN:** see [UGREEN](#ugreen) below.
 - **Proxmox:** see [Proxmox VE](#proxmox-ve) below.
 - **MOS:** install RustDesk from the [MOS Hub](https://mos-official.net/apps.html?search=RustDesk) and fill in the four address fields.
 - **ZimaOS and CasaOS:** add the [community store](https://github.com/junkerderprovinz/zimaos-apps#install) and install RustDesk with Custom Installation, where you fill in the four addresses.
@@ -202,6 +209,20 @@ docker exec rustdesk /app/apimain reset-admin-pwd <new password>
 Ports: 21114 (console and web client), 21115 (NAT test), 21116 TCP and UDP (ID server), 21117 (relay), 21118 and 21119 (websocket variants for the web client). Forward 21115 to 21117 if devices outside your network should connect; the console does not need to be reachable from outside.
 
 The web client in the browser gets the server's address and key from the container, so it connects without a login. It talks to the server directly on 21118 and 21119 at the address in the ID server field, so the browser has to reach both. Over plain HTTP, such as `http://<server>:21114/webclient/` at home, that is all it needs. Over HTTPS the browser asks for `wss://<server>:21118` and `wss://<server>:21119`, so your reverse proxy has to accept TLS on those two ports and pass the websocket on to the container. Without that the web client loads but stops with "connection error".
+
+### Synology
+
+In Container Manager (DSM 7.2 or newer), open **Project** and click **Create**. Pick a folder for RustDesk and upload [compose.yaml](compose.yaml). Container Manager does not create missing folders, so create the ones the file names under `volumes` in File Station first.
+
+### QNAP
+
+In Container Station, open **Applications** and click **Create**. Paste [compose.yaml](compose.yaml) and point the folders under `volumes` at a share, for example `/share/Container/rustdesk`.
+
+### UGREEN
+
+In the Docker app of UGOS Pro, open **Project** and click **Create**. Pick a folder for RustDesk and paste [compose.yaml](compose.yaml).
+
+<sub>The Synology logo is a trademark of Synology Inc. and the QNAP logo a trademark of QNAP Systems, Inc., both registered in Taiwan and other regions.</sub>
 
 <br>
 
