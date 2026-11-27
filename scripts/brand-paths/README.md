@@ -35,7 +35,7 @@ a trademark may be used without permission, which is to refer to the thing they
 name: each sits on a download button for that platform, unmodified, and nothing
 here claims endorsement by or affiliation with Microsoft, Apple, Linus
 Torvalds, Google, F-Droid, Docker, Lime Technology, MOS, IceWhale, Umbrel,
-Proxmox, Synology, QNAP, UGREEN or iXsystems. The ZIP is no one's mark; it
+Proxmox, Synology, QNAP, UGREEN or iXsystems. The ZIP is no one's mark. It
 stands for the source archive.
 
 ## Adding one
