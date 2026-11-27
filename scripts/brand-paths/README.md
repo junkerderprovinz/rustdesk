@@ -33,8 +33,8 @@ MOS's mark is the `mos.svg` in mos-nas/mos-releases, and ZimaOS's the
 Every platform mark here is a trademark of its owner. They are used the one way
 a trademark may be used without permission, which is to refer to the thing they
 name: each sits on a download button for that platform, unmodified, and nothing
-here claims endorsement by or affiliation with Microsoft, Apple, the Linux
-Foundation, Google, F-Droid, Docker, Lime Technology, MOS, IceWhale, Umbrel,
+here claims endorsement by or affiliation with Microsoft, Apple, Linus
+Torvalds, Google, F-Droid, Docker, Lime Technology, MOS, IceWhale, Umbrel,
 Proxmox, Synology, QNAP, UGREEN or iXsystems. The ZIP is no one's mark; it
 stands for the source archive.
 
